@@ -33,17 +33,26 @@ function AdminDashboard() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h3" component="h1" gutterBottom>
-        Admin Dashboard
-      </Typography>
+      <MotionPaper
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        elevation={3}
+        sx={{ p: 3, mb: 4, backgroundColor: '#f5f5f5' }}
+      >
+        <Typography variant="h3" component="h1" gutterBottom>
+          Admin Dashboard
+        </Typography>
+      </MotionPaper>
 
       <Grid2 container spacing={4}>
         <Grid2 item xs={12} lg={6}>
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
             elevation={3}
-            sx={{ p: 3 }}
+            sx={{ p: 3, backgroundColor: '#e3f2fd' }}
           >
             <Typography variant="h5" gutterBottom>
               Create New Event
@@ -115,8 +124,9 @@ function AdminDashboard() {
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
             elevation={3}
-            sx={{ p: 3 }}
+            sx={{ p: 3, backgroundColor: '#e8f5e9' }}
           >
             <Typography variant="h5" gutterBottom>
               Manage Users
@@ -125,8 +135,9 @@ function AdminDashboard() {
               {users.map((user) => (
                 <MotionCard
                   key={user.id}
-                  whileHover={{ scale: 1.02 }}
-                  sx={{ mb: 2 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  sx={{ mb: 2, backgroundColor: '#ffffff' }}
                 >
                   <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
@@ -139,6 +150,7 @@ function AdminDashboard() {
                     <IconButton
                       onClick={() => handleDeleteUser(user.id)}
                       color="error"
+                      sx={{ color: 'primary.main' }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -153,8 +165,9 @@ function AdminDashboard() {
       <MotionPaper
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
         elevation={3}
-        sx={{ p: 3, mt: 4 }}
+        sx={{ p: 3, mt: 4, backgroundColor: '#ffecb3' }}
       >
         <Typography variant="h5" gutterBottom>
           Current Events
@@ -163,7 +176,9 @@ function AdminDashboard() {
           {events.map((event) => (
             <Grid2 item xs={12} md={6} lg={4} key={event.id}>
               <MotionCard
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.08 }}
+                transition={{ duration: 0.3 }}
+                sx={{ backgroundColor: '#ffffff' }}
               >
                 <CardContent>
                   <Typography variant="h6">{event.title}</Typography>

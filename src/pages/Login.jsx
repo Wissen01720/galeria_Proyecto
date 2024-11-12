@@ -1,4 +1,6 @@
+// Login.jsx
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -61,31 +63,58 @@ const theme = createTheme({
   },
 });
 
-const MotionPaper = motion(Paper);
+const MotionPaper = motion.create(Paper);
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();  // Accede al método de login del contexto
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simular autenticación
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-
-    if (credentials.email === 'admin@example.com' && credentials.password === 'password') {
-      navigate('/admin-dashboard');
-    } else if (credentials.email === 'artist@example.com' && credentials.password === 'password') {
-      navigate('/artist-dashboard');
-    } else if (credentials.email === 'visitor@example.com' && credentials.password === 'password') {
-      navigate('/gallery');
-    } else {
+  
+    const loginData = {
+      email: credentials.email,
+      password: credentials.password,
+    };
+  
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+  
+      const data = await response.json();
+      console.log('Response data:', data); // Agregar registro de depuración
+  
+      if (response.ok) {
+        login(data);  // Llama al método login del contexto y pasa los datos del usuario
+        console.log('User role:', data.role); // Agregar registro de depuración
+        if (data.role === 'artist') {
+          navigate('/artist-dashboard');
+        } else if (data.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/'); // Redirigir a la página de inicio si no es artista ni admin
+        }
+      } else {
+        setShowError(true);
+        setErrorMessage(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error); // Agregar registro de depuración
       setShowError(true);
+      setErrorMessage('An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -269,7 +298,7 @@ function Login() {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
           <Alert severity="error" elevation={6} variant="filled">
-            Invalid email or password!
+            {errorMessage}
           </Alert>
         </Snackbar>
       </Container>

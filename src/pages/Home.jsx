@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid2, Container, Box, Button, Card, CardContent, CardMedia } from '@mui/material';
+import { Typography, Grid, Container, Box, Button, Card, CardContent, CardMedia } from '@mui/material';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/system';
 
@@ -52,13 +52,13 @@ const Home = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3, duration: 0.8 }}
       >
-        <Grid2 container spacing={4} sx={{ mt: 6 }}>
+        <Grid container spacing={4} sx={{ mt: 6 }}>
           {[
             { title: 'Modern Art', image: 'modern_art', description: 'Experience the creativity and innovation of modern art.' },
             { title: 'Classical Art', image: 'classical_art', description: 'Dive into the timeless beauty of classical art.' },
             { title: 'Digital Art', image: 'digital_art', description: 'Discover the cutting-edge world of digital art.' },
           ].map((item, index) => (
-            <Grid2 item xs={12} md={4} key={index}>
+            <Grid item xs={12} md={4} key={index}>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -82,9 +82,9 @@ const Home = () => {
                   </CardContent>
                 </Card>
               </motion.div>
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
       </motion.div>
     </StyledContainer>
   );
