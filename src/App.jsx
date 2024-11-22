@@ -5,10 +5,10 @@ import Navbar from './Components/NavBar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Gallery from './pages/Gallery';
 import ArtistDashboard from './pages/ArtistDashboard';
 import AdminDashboard from './pages/AdminDashboard';
-import ManageUsers from './pages/ManageUsers'; // Asegúrate de importar el componente ManageUsers
+import MyArtworks from './pages/MyArtworks';
+import ManageUsers from './pages/ManageUsers';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -22,10 +22,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/gallery" element={<Gallery />} />
               <Route path="/artist-dashboard" element={<ArtistDashboard />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/manage-users" element={<ManageUsers />} /> {/* Define la ruta para ManageUsers */}
+              <Route path="/my-artworks" element={<MyArtworks />} />
+              <Route path="/manage-users" element={<ManageUsers />} />
             </Routes>
           </Container>
         </div>

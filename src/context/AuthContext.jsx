@@ -1,30 +1,28 @@
-// AuthContext.jsx
 import { createContext, useContext, useState } from 'react';
 
+// Crear el contexto de autenticación
 const AuthContext = createContext();
 
+// Exportar el hook para acceder al contexto de autenticación
 export const useAuth = () => useContext(AuthContext);
 
+// El componente que proporciona el contexto
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // Simulando un proceso de inicio de sesión
   const login = (userData) => {
-    console.log('Login called with userData:', userData); // Debug log
     setUser(userData);
+    console.log("User logged in:", userData);
   };
 
   const logout = () => {
-    console.log('Logout called'); // Debug log
     setUser(null);
-  };
-
-  // Add a debug component to show current auth state
-  const debugAuth = () => {
-    console.log('Current user state:', user);
+    console.log("User logged out");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, debugAuth }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

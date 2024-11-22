@@ -2,6 +2,7 @@ package com.usta.gallery.entities;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,23 +29,19 @@ public class Obras {
     @Column(name = "descripcion", length = Integer.MAX_VALUE)
     private String descripcion;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "año_creacion")
     private LocalDate añoCreacion;
 
     @Column(name = "imagen", length = Integer.MAX_VALUE)
     private String imagen;
 
+    @Column(name = "tecnica", length = Integer.MAX_VALUE)
+    private String tecnica;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuarios idUsuario;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id_rol", nullable = false)
-    private Roles idRol;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id_tecnica", nullable = false)
-    private Tecnicas idTecnica;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_tipo", nullable = false)

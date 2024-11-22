@@ -1,12 +1,12 @@
 package com.usta.gallery.controllers;
 
-import com.usta.gallery.entities.Obras;
-import com.usta.gallery.repository.ObraRepository;
+import com.usta.gallery.entities.*;
+import com.usta.gallery.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,79 +17,114 @@ public class ObrasController {
     @Autowired
     private ObraRepository obrasRepository;
 
+    @Autowired
+    private TipoObraRepository tipoObraRepository;
+
+    @Autowired
+    private UsuariosRepository usuariosRepository;
+
+    // Obtener todas las obras
     @GetMapping
-    public List<Obras> getAllObras() {
-        return obrasRepository.findAll();
+    public ResponseEntity<List<Obras>> getAllObras() {
+        return ResponseEntity.ok(obrasRepository.findAll());
     }
 
+    // Obtener una obra por ID
     @GetMapping("/{id}")
     public ResponseEntity<Obras> getObraById(@PathVariable Long id) {
-        Obras obra = obrasRepository.findById(id).orElse(null);
-        if (obra == null) {
-            return ResponseEntity.notFound().build();
+        return obrasRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Crear una nueva obra
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<?> createObra(@RequestBody Obras nuevaObra) {
+        try {
+            // Validar entidades relacionadas
+            if (nuevaObra.getTipo() == null || nuevaObra.getTipo().getId() == null) {
+                return ResponseEntity.badRequest().body("Tipo de obra no válido");
+            }
+            TipoObra tipoObra = tipoObraRepository.findById(nuevaObra.getTipo().getId())
+                    .orElse(null);
+            if (tipoObra == null) {
+                return ResponseEntity.badRequest().body("Tipo de obra no válido");
+            }
+
+            if (nuevaObra.getIdUsuario() == null || nuevaObra.getIdUsuario().getId() == null) {
+                return ResponseEntity.badRequest().body("Usuario no válido");
+            }
+            Usuarios usuario = usuariosRepository.findById(nuevaObra.getIdUsuario().getId())
+                    .orElse(null);
+            if (usuario == null) {
+                return ResponseEntity.badRequest().body("Usuario no válido");
+            }
+
+            // Asignar relaciones
+            nuevaObra.setTipo(tipoObra);
+            nuevaObra.setIdUsuario(usuario);
+
+            // Manejar año de creación (si aplica)
+            if (nuevaObra.getAñoCreacion() != null) {
+                nuevaObra.setAñoCreacion(LocalDate.of(nuevaObra.getAñoCreacion().getYear(), 1, 1));
+            }
+
+            Obras obraGuardada = obrasRepository.save(nuevaObra);
+            return ResponseEntity.status(HttpStatus.CREATED).body(obraGuardada);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la obra");
         }
-        return ResponseEntity.ok(obra);
     }
 
-    @PostMapping(consumes = "multipart/form-data")  // Aceptar multipart
-    public ResponseEntity<Obras> createObra(@RequestParam("titulo") String titulo,
-                                            @RequestParam("descripcion") String descripcion,
-                                            @RequestParam("añoCreacion") int añoCreacion,
-                                            @RequestParam("file") MultipartFile file) throws IOException {
-        LocalDate fechaCreacion = LocalDate.of(añoCreacion, 1, 1);  // Asume el 1 de enero como fecha de creación
-        
-        // Procesar el archivo (guardar la imagen, etc.)
-        String imagenUrl = saveFile(file);
-
-        // Crear una nueva obra
-        Obras nuevaObra = new Obras();
-        nuevaObra.setTitulo(titulo);
-        nuevaObra.setDescripcion(descripcion);
-        nuevaObra.setAñoCreacion(fechaCreacion);  // Asignar el LocalDate al campo añoCreacion
-        nuevaObra.setImagen(imagenUrl);  // Guardar la URL de la imagen en la base de datos
-
-        Obras obraGuardada = obrasRepository.save(nuevaObra);
-        return ResponseEntity.ok(obraGuardada);
-    }
-
-
-    // Método para guardar el archivo
-    private String saveFile(MultipartFile file) throws IOException {
-        // Aquí guardas el archivo y devuelves la URL o ruta de la imagen guardada
-        // Esto dependerá de cómo desees almacenar el archivo (en un servidor o en una base de datos, por ejemplo)
-        
-        // Ejemplo de guardar el archivo localmente
-        String filePath = "path/to/save/" + file.getOriginalFilename();
-        file.transferTo(new java.io.File(filePath));
-        
-        return filePath;  // Retornar la URL o ruta donde se guardó el archivo
-    }
-
+    // Actualizar una obra existente
     @PutMapping("/{id}")
-    public ResponseEntity<Obras> updateObra(@PathVariable Long id, @RequestBody Obras obraDetails) {
-        Obras obra = obrasRepository.findById(id).orElse(null);
-        if (obra == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateObra(@PathVariable Long id, @RequestBody Obras obraDetails) {
+        try {
+            Obras obraExistente = obrasRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Obra no encontrada"));
+
+            // Actualizar campos
+            obraExistente.setTitulo(obraDetails.getTitulo());
+            obraExistente.setDescripcion(obraDetails.getDescripcion());
+            obraExistente.setAñoCreacion(obraDetails.getAñoCreacion());
+            obraExistente.setImagen(obraDetails.getImagen());
+            obraExistente.setTecnica(obraDetails.getTecnica());
+
+            // Actualizar relaciones
+            if (obraDetails.getTipo() != null) {
+                TipoObra tipoObra = tipoObraRepository.findById(obraDetails.getTipo().getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Tipo de obra no válido"));
+                obraExistente.setTipo(tipoObra);
+            }
+
+            if (obraDetails.getIdUsuario() != null) {
+                Usuarios usuario = usuariosRepository.findById(obraDetails.getIdUsuario().getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Usuario no válido"));
+                obraExistente.setIdUsuario(usuario);
+            }
+
+            Obras obraActualizada = obrasRepository.save(obraExistente);
+            return ResponseEntity.ok(obraActualizada);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la obra");
         }
-        obra.setTitulo(obraDetails.getTitulo());
-        obra.setDescripcion(obraDetails.getDescripcion());
-        obra.setAñoCreacion(obraDetails.getAñoCreacion());
-        obra.setImagen(obraDetails.getImagen());
-        obra.setIdUsuario(obraDetails.getIdUsuario());
-        obra.setIdRol(obraDetails.getIdRol());
-        obra.setIdTecnica(obraDetails.getIdTecnica());
-        obra.setTipo(obraDetails.getTipo());
-        Obras updatedObra = obrasRepository.save(obra);
-        return ResponseEntity.ok(updatedObra);
     }
 
+    // Eliminar una obra
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteObra(@PathVariable Long id) {
-        Obras obra = obrasRepository.findById(id).orElse(null);
-        if (obra == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteObra(@PathVariable Long id) {
+        try {
+            Obras obraExistente = obrasRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Obra no encontrada"));
+            obrasRepository.delete(obraExistente);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la obra");
         }
-        obrasRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

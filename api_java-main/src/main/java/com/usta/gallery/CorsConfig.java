@@ -14,15 +14,11 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost:5173"); // Cambia esto a la URL de tu frontend
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-
-        // Verificar la configuración
-        System.out.println("CORS configuration set for http://localhost:5173");
 
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
 }

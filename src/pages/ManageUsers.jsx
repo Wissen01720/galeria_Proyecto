@@ -34,6 +34,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format, parseISO } from 'date-fns';
 
 const ManageUsers = () => {
   // Estados
@@ -49,7 +50,7 @@ const ManageUsers = () => {
     apellido: '',
     correo: '',
     contrasena: '',
-    role: 'user', // Valor inicial para evitar problemas de componentes controlados y no controlados
+    role: 'visitor', // Valor inicial para evitar problemas de componentes controlados y no controlados
     paisOrigen: '',
     fechaNacimiento: null,
   });
@@ -84,7 +85,7 @@ const ManageUsers = () => {
         contrasena: user.contrasena,
         role: user.roles.rol.toLowerCase(), // Asegúrate de que el valor coincida con las opciones disponibles
         paisOrigen: user.paisOrigen || '',
-        fechaNacimiento: user.fechaNacimiento || null,
+        fechaNacimiento: user.fechaNacimiento ? parseISO(user.fechaNacimiento) : null,
       });
     } else {
       setSelectedUser(null);
@@ -93,7 +94,7 @@ const ManageUsers = () => {
         apellido: '',
         correo: '',
         contrasena: '',
-        role: 'user', // Valor inicial para evitar problemas de componentes controlados y no controlados
+        role: 'visitor', // Valor inicial para evitar problemas de componentes controlados y no controlados
         paisOrigen: '',
         fechaNacimiento: null,
       });
@@ -109,7 +110,7 @@ const ManageUsers = () => {
       apellido: '',
       correo: '',
       contrasena: '',
-      role: 'user', // Valor inicial para evitar problemas de componentes controlados y no controlados
+      role: 'visitor', // Valor inicial para evitar problemas de componentes controlados y no controlados
       paisOrigen: '',
       fechaNacimiento: null,
     });
@@ -120,6 +121,7 @@ const ManageUsers = () => {
     try {
       const userData = {
         ...formData,
+        fechaNacimiento: formData.fechaNacimiento ? format(formData.fechaNacimiento, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") : null,
         roles: { id: getRoleId(formData.role) } // Asegúrate de enviar el ID del rol
       };
       if (selectedUser) {
@@ -197,7 +199,7 @@ const ManageUsers = () => {
         return 1;
       case 'artist':
         return 2;
-      case 'user':
+      case 'visitor':
         return 3;
       default:
         return 3;
@@ -291,7 +293,7 @@ const ManageUsers = () => {
                           País de Origen: {user.paisOrigen}
                         </Typography>
                         <Typography color="text.secondary">
-                          Fecha de Nacimiento: {user.fechaNacimiento}
+                          Fecha de Nacimiento: {user.fechaNacimiento ? format(parseISO(user.fechaNacimiento), 'dd/MM/yyyy') : ''}
                         </Typography>
                       </CardContent>
                       <CardActions sx={{ mt: 'auto' }}>
@@ -381,7 +383,7 @@ const ManageUsers = () => {
                     <DatePicker
                       label="Fecha de Nacimiento"
                       value={formData.fechaNacimiento}
-                      onChange={(newValue) => setFormData({ ...formData, fechaNacimiento: newValue })}
+                      onChange={(newValue) => setFormData({ ...formData, fechaNacimiento: newValue })} 
                       slotProps={{ textField: { fullWidth: true } }}
                     />
                   </LocalizationProvider>
@@ -396,7 +398,7 @@ const ManageUsers = () => {
                     >
                       <MenuItem value="admin">Administrador</MenuItem>
                       <MenuItem value="artist">Artista</MenuItem>
-                      <MenuItem value="user">Usuario</MenuItem>
+                      <MenuItem value="visitor">Visitante</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

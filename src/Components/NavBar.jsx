@@ -12,11 +12,6 @@ import { useAuth } from '../context/AuthContext';
 const Navbar = () => {
   const { user, logout } = useAuth();
 
-  useEffect(() => {
-    console.log('Current user in Navbar:', user);
-    console.log('User role:', user?.role);
-  }, [user]);
-
   const renderAuthenticatedMenu = () => {
     if (!user) return null;
 
@@ -28,7 +23,7 @@ const Navbar = () => {
               component={RouterLink}
               to="/artist-dashboard"
               startIcon={<DashboardIcon />}
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Artist Dashboard
             </Button>
@@ -36,7 +31,7 @@ const Navbar = () => {
               component={RouterLink}
               to="/my-artworks"
               startIcon={<ArtTrackIcon />}
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               My Artworks
             </Button>
@@ -49,15 +44,15 @@ const Navbar = () => {
               component={RouterLink}
               to="/admin-dashboard"
               startIcon={<DashboardIcon />}
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Admin Dashboard
             </Button>
             <Button
               component={RouterLink}
-              to="/manage-users" // Asegúrate de que la ruta esté en minúsculas
+              to="/manage-users"
               startIcon={<ManageAccountsIcon />}
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Manage Users
             </Button>
@@ -70,7 +65,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: '#34495e' }}>
       <Toolbar>
         <IconButton edge="start" color="inherit" aria-label="menu">
           <MenuIcon />
@@ -82,7 +77,7 @@ const Navbar = () => {
           component={RouterLink}
           to="/"
           startIcon={<HomeIcon />}
-          sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+          sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
         >
           Home
         </Button>
@@ -93,7 +88,7 @@ const Navbar = () => {
             <Button
               onClick={logout}
               startIcon={<LogoutIcon />}
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Logout
             </Button>
@@ -103,14 +98,14 @@ const Navbar = () => {
             <Button
               component={RouterLink}
               to="/login"
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Login
             </Button>
             <Button
               component={RouterLink}
               to="/register"
-              sx={{ color: '#ecf0f1', '&:hover': { color: '#f1c40f' } }}
+              sx={{ color: '#ecf0f1', '&:hover': { color: '#c0392b' } }}
             >
               Register
             </Button>

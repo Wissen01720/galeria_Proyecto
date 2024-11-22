@@ -1,34 +1,169 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Container, Typography, Grid2, Paper, TextField, Button, Card, CardContent, IconButton, Box } from '@mui/material';
+import { Container, Typography, Grid, Paper, TextField, Button, IconButton, MenuItem, Select, InputLabel, FormControl, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const MotionPaper = motion(Paper);
-const MotionCard = motion(Card);
 
 function AdminDashboard() {
-  const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
     startDate: '',
     endDate: '',
-    location: ''
+    location: '',
+    categoria: ''
   });
+  const [newCategory, setNewCategory] = useState('');
+  const [editCategoryId, setEditCategoryId] = useState(null);
+  const [editCategoryName, setEditCategoryName] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'artist' },
-    // Add more user data here
-  ]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/categorias');
+        if (!response.ok) {
+          throw new Error('Error fetching categories');
+        }
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setCategories(data);
+        } else {
+          throw new Error('Categories data is not an array');
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
 
-  const handleEventSubmit = (e) => {
+    fetchCategories();
+  }, []);
+
+  const handleEventSubmit = async (e) => {
     e.preventDefault();
-    setEvents([...events, { ...newEvent, id: Date.now() }]);
-    setNewEvent({ title: '', description: '', startDate: '', endDate: '', location: '' });
+  
+    if (!newEvent.title) {
+      alert("El título de la exposición es obligatorio.");
+      return;
+    }
+  
+    try {
+      const eventToSubmit = {
+        titulo: newEvent.title,
+        descripcion: newEvent.description,
+        fechaInicio: newEvent.startDate,
+        fechaFin: newEvent.endDate,
+        ubicacion: newEvent.location,
+        categoria: { id: newEvent.categoria },
+      };
+      
+      console.log('Event to submit:', eventToSubmit);
+      
+      const response = await fetch('http://localhost:8080/api/exposiciones', {
+        method: 'POST',
+        body: JSON.stringify(eventToSubmit),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });      
+  
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+  
+      const data = await response.json();
+      console.log('Exposición creada:', data);
+  
+      setNewEvent({ title: '', description: '', startDate: '', endDate: '', location: '', categoria: '' });
+  
+    } catch (error) {
+      console.error('Error creating event:', error.message || error);
+    }
+  };      
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:8080/api/categorias', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ categoria: newCategory }),
+      });
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+      const data = await response.json();
+      setCategories([...categories, data]);
+      setNewCategory('');
+    } catch (error) {
+      console.error('Error creating category:', error.message || error);
+    }
   };
 
-  const handleDeleteUser = (userId) => {
-    setUsers(users.filter(user => user.id !== userId));
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/categorias/${categoryId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+      setCategories(categories.filter(category => category.id !== categoryId));
+    } catch (error) {
+      console.error('Error deleting category:', error.message || error);
+    }
+  };
+
+  const handleEditCategory = (category) => {
+    setEditCategoryId(category.id);
+    setEditCategoryName(category.categoria);
+  };
+
+  const handleSaveCategory = async (categoryId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/categorias/${categoryId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ categoria: editCategoryName }),
+      });
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+      const data = await response.json();
+      setCategories(categories.map(category => (category.id === categoryId ? data : category)));
+      setEditCategoryId(null);
+      setEditCategoryName('');
+    } catch (error) {
+      console.error('Error updating category:', error.message || error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditCategoryId(null);
+    setEditCategoryName('');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
@@ -45,8 +180,8 @@ function AdminDashboard() {
         </Typography>
       </MotionPaper>
 
-      <Grid2 container spacing={4}>
-        <Grid2 item xs={12} lg={6}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} lg={6}>
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -76,8 +211,8 @@ function AdminDashboard() {
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                 required
               />
-              <Grid2 container spacing={2} sx={{ my: 1 }}>
-                <Grid2 item xs={6}>
+              <Grid container spacing={2} sx={{ my: 1 }}>
+                <Grid item xs={6}>
                   <TextField
                     fullWidth
                     type="date"
@@ -87,8 +222,8 @@ function AdminDashboard() {
                     onChange={(e) => setNewEvent({ ...newEvent, startDate: e.target.value })}
                     required
                   />
-                </Grid2>
-                <Grid2 item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                   <TextField
                     fullWidth
                     type="date"
@@ -98,8 +233,8 @@ function AdminDashboard() {
                     onChange={(e) => setNewEvent({ ...newEvent, endDate: e.target.value })}
                     required
                   />
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
               <TextField
                 fullWidth
                 label="Location"
@@ -108,6 +243,21 @@ function AdminDashboard() {
                 onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
                 required
               />
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="categoria-label">Category</InputLabel>
+                <Select
+                  labelId="categoria-label"
+                  value={newEvent.categoria}
+                  onChange={(e) => setNewEvent({ ...newEvent, categoria: e.target.value })}
+                  required
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.categoria}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <Button
                 type="submit"
                 variant="contained"
@@ -118,9 +268,9 @@ function AdminDashboard() {
               </Button>
             </form>
           </MotionPaper>
-        </Grid2>
+        </Grid>
 
-        <Grid2 item xs={12} lg={6}>
+        <Grid item xs={12} lg={6}>
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -129,77 +279,86 @@ function AdminDashboard() {
             sx={{ p: 3, backgroundColor: '#e8f5e9' }}
           >
             <Typography variant="h5" gutterBottom>
-              Manage Users
+              Manage Categories
             </Typography>
-            <Box sx={{ mt: 2 }}>
-              {users.map((user) => (
-                <MotionCard
-                  key={user.id}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                  sx={{ mb: 2, backgroundColor: '#ffffff' }}
-                >
-                  <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box>
-                      <Typography variant="h6">{user.name}</Typography>
-                      <Typography color="text.secondary">{user.email}</Typography>
-                      <Typography variant="caption" sx={{ textTransform: 'capitalize' }}>
-                        {user.role}
-                      </Typography>
-                    </Box>
-                    <IconButton
-                      onClick={() => handleDeleteUser(user.id)}
-                      color="error"
-                      sx={{ color: 'primary.main' }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardContent>
-                </MotionCard>
-              ))}
-            </Box>
-          </MotionPaper>
-        </Grid2>
-      </Grid2>
-
-      <MotionPaper
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        elevation={3}
-        sx={{ p: 3, mt: 4, backgroundColor: '#ffecb3' }}
-      >
-        <Typography variant="h5" gutterBottom>
-          Current Events
-        </Typography>
-        <Grid2 container spacing={3}>
-          {events.map((event) => (
-            <Grid2 item xs={12} md={6} lg={4} key={event.id}>
-              <MotionCard
-                whileHover={{ scale: 1.08 }}
-                transition={{ duration: 0.3 }}
-                sx={{ backgroundColor: '#ffffff' }}
+            <form onSubmit={handleCategorySubmit}>
+              <TextField
+                fullWidth
+                label="New Category"
+                margin="normal"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                required
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{ mt: 2 }}
               >
-                <CardContent>
-                  <Typography variant="h6">{event.title}</Typography>
-                  <Typography color="text.secondary" sx={{ mb: 1 }}>
-                    {event.description}
-                  </Typography>
-                  <Typography variant="body2">
-                    Start: {event.startDate}
-                  </Typography>
-                  <Typography variant="body2">
-                    End: {event.endDate}
-                  </Typography>
-                  <Typography variant="body2">
-                    Location: {event.location}
-                  </Typography>
-                </CardContent>
-              </MotionCard>
-            </Grid2>
-          ))}
-        </Grid2>
-      </MotionPaper>
+                Add Category
+              </Button>
+            </form>
+            <TableContainer component={Paper} sx={{ mt: 4 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Category</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {categories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((category) => (
+                    <TableRow key={category.id}>
+                      <TableCell>
+                        {editCategoryId === category.id ? (
+                          <TextField
+                            fullWidth
+                            value={editCategoryName}
+                            onChange={(e) => setEditCategoryName(e.target.value)}
+                          />
+                        ) : (
+                          category.categoria
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {editCategoryId === category.id ? (
+                          <>
+                            <IconButton onClick={() => handleSaveCategory(category.id)} color="primary">
+                              <SaveIcon />
+                            </IconButton>
+                            <IconButton onClick={handleCancelEdit} color="secondary">
+                              <CancelIcon />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <>
+                            <IconButton onClick={() => handleEditCategory(category)} color="primary">
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton onClick={() => handleDeleteCategory(category.id)} color="error">
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={categories.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableContainer>
+          </MotionPaper>
+        </Grid>
+      </Grid>
     </Container>
   );
 }

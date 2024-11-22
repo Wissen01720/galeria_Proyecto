@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -33,8 +34,9 @@ public class Usuarios {
     @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    private LocalDateTime fechaNacimiento;
 
     @Column(name = "pais_origen", length = 255)
     private String paisOrigen;

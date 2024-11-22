@@ -1,92 +1,175 @@
-import React from 'react';
-import { Typography, Grid, Container, Box, Button, Card, CardContent, CardMedia } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Typography, Grid, Box, Button, Card, CardContent, CardMedia } from '@mui/material';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/system';
+import ArtworkCarousel from './ArtworkCarousel';
+import EventsSection from './EventsSection';
 
-const StyledContainer = styled(Container)(({ theme }) => ({
+const FullWidthWrapper = styled(Box)({
+  width: '100vw',
   minHeight: '100vh',
+  margin: 0,
+  padding: 0,
+  position: 'relative',
+  left: '50%',
+  right: '50%',
+  marginLeft: '-50vw',
+  marginRight: '-50vw',
+  background: 'linear-gradient(135deg, #e0f7fa 0%, #80deea 100%)',
+});
+
+const ContentWrapper = styled(Box)({
+  maxWidth: '1200px',
+  margin: '0 auto',
+  padding: '2rem',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
-  background: 'linear-gradient(135deg, #e0f7fa 0%, #80deea 100%)',
-  padding: theme.spacing(4),
-}));
+});
 
-const StyledBox = styled(Box)(({ theme }) => ({
-  textAlign: 'center',
-  marginBottom: theme.spacing(4),
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  padding: theme.spacing(1, 4),
-  fontSize: '1.2rem',
-  background: 'linear-gradient(45deg, #ff6f61 30%, #ff8e53 90%)',
+const StyledButton = styled(Button)({
+  marginTop: '16px',
+  padding: '8px 32px',
+  fontSize: '1.1rem',
+  backgroundColor: '#ff6f61',
   color: '#fff',
   '&:hover': {
-    background: 'linear-gradient(45deg, #ff8e53 30%, #ff6f61 90%)',
+    backgroundColor: '#ff8e53',
   },
-}));
+});
+
+const StyledCard = styled(Card)({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: '#ffffff',
+  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  transition: 'transform 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+  },
+});
 
 const Home = () => {
+  const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/obras');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setArtworks(data);
+      } catch (error) {
+        console.error('Error fetching artworks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtworks();
+  }, []);
+
   return (
-    <StyledContainer maxWidth="lg">
-      <StyledBox>
+    <FullWidthWrapper>
+      <ContentWrapper>
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
+          style={{ width: '100%', textAlign: 'center' }}
         >
-          <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography 
+            variant="h2" 
+            component="h1" 
+            sx={{ 
+              fontWeight: 'bold',
+              color: '#1a237e',
+              mb: 3,
+              fontSize: { xs: '2.5rem', md: '3.5rem' }
+            }}
+          >
             Welcome to the Art World
           </Typography>
-          <Typography variant="h5" color="inherit" paragraph>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              color: '#37474f',
+              mb: 6,
+              fontSize: { xs: '1.2rem', md: '1.5rem' }
+            }}
+          >
             Explore the finest collections of art from around the globe
           </Typography>
         </motion.div>
-      </StyledBox>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-      >
-        <Grid container spacing={4} sx={{ mt: 6 }}>
-          {[
-            { title: 'Modern Art', image: 'modern_art', description: 'Experience the creativity and innovation of modern art.' },
-            { title: 'Classical Art', image: 'classical_art', description: 'Dive into the timeless beauty of classical art.' },
-            { title: 'Digital Art', image: 'digital_art', description: 'Discover the cutting-edge world of digital art.' },
-          ].map((item, index) => (
-            <Grid item xs={12} md={4} key={index}>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <Card sx={{ maxWidth: 345, boxShadow: 3 }}>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={`images/${item.image}.jpg`}
-                    alt={item.title}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.description}
-                    </Typography>
-                    <StyledButton variant="contained">Learn More</StyledButton>
-                  </CardContent>
-                </Card>
-              </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          style={{ width: '100%' }}
+        >
+          {loading ? (
+            <Typography variant="h6" color="textSecondary" align="center">
+              Loading artworks...
+            </Typography>
+          ) : artworks.length > 0 ? (
+            <Grid container spacing={4}>
+              {artworks.map((artwork) => (
+                <Grid item xs={12} sm={6} md={4} key={artwork.id}>
+                  <StyledCard>
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={artwork.imagen}
+                      alt={artwork.titulo}
+                      sx={{ objectFit: 'cover' }}
+                    />
+                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <Typography 
+                          variant="h5" 
+                          component="h2"
+                          sx={{ 
+                            color: '#1a237e',
+                            mb: 1,
+                            fontWeight: 500
+                          }}
+                        >
+                          {artwork.titulo}
+                        </Typography>
+                        <Typography 
+                          variant="body1"
+                          sx={{ 
+                            color: '#546e7a',
+                            mb: 2
+                          }}
+                        >
+                          {artwork.descripcion}
+                        </Typography>
+                      </div>
+                      <StyledButton variant="contained">
+                        LEARN MORE
+                      </StyledButton>
+                    </CardContent>
+                  </StyledCard>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-      </motion.div>
-    </StyledContainer>
+          ) : (
+            <Typography variant="h6" color="textSecondary" align="center">
+              No artworks available. Start creating and sharing your amazing artworks!
+            </Typography>
+          )}
+        </motion.div>
+
+        <ArtworkCarousel technique="Óleo" category="Paisaje" />
+        <EventsSection />
+      </ContentWrapper>
+    </FullWidthWrapper>
   );
 };
 

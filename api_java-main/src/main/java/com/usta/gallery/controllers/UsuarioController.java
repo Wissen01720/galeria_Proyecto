@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:5173") // Permitir solicitudes desde este origen
+@CrossOrigin(origins = "http://localhost:5173")
 public class UsuarioController {
 
     @Autowired
@@ -74,6 +74,9 @@ public class UsuarioController {
                     if (rol.isPresent()) {
                         usuario.setRoles(rol.get());
                     }
+                }
+                if (updatedUsuario.getFechaNacimiento() != null) {
+                    usuario.setFechaNacimiento(updatedUsuario.getFechaNacimiento());
                 }
                 Usuarios savedUsuario = usuarioRepository.save(usuario);
                 return ResponseEntity.ok(savedUsuario);

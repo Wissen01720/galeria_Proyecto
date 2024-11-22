@@ -16,7 +16,6 @@ import {
   Email
 } from '@mui/icons-material';
 
-// Crear un tema personalizado
 const theme = createTheme({
   palette: {
     primary: {
