@@ -6,7 +6,7 @@
   "scripts": {
     "frontend": "vite",
     "backend": "cd api_java-main && mvn spring-boot:run",
-    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

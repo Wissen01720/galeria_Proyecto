@@ -181,7 +181,7 @@ function AdminDashboard() {
       </MotionPaper>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} md={6}>
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -212,7 +212,7 @@ function AdminDashboard() {
                 required
               />
               <Grid container spacing={2} sx={{ my: 1 }}>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     type="date"
@@ -223,7 +223,7 @@ function AdminDashboard() {
                     required
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     type="date"
@@ -270,7 +270,7 @@ function AdminDashboard() {
           </MotionPaper>
         </Grid>
 
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} md={6}>
           <MotionPaper
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

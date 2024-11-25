@@ -349,7 +349,6 @@ function Register() {
                     >
                       <MenuItem value={1}>Visitor</MenuItem>
                       <MenuItem value={2}>Artist</MenuItem>
-                      <MenuItem value={3}>Admin</MenuItem>
                     </Select>
                   </FormControl>
                 </motion.div>
