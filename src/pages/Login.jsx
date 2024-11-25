@@ -71,7 +71,7 @@ function Login() {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();  // Accede al método de login del contexto
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,11 +92,12 @@ function Login() {
       });
   
       const data = await response.json();
-      console.log('Response data:', data); // Agregar registro de depuración
+      console.log('Response data:', data);
   
       if (response.ok) {
-        login(data);  // Llama al método login del contexto y pasa los datos del usuario
-        console.log('User role:', data.role); // Agregar registro de depuración
+        login(data);
+        console.log('User', data);
+        console.log('User role:', data.role);
         if (data.role === 'artist') {
           navigate('/artist-dashboard');
         } else if (data.role === 'admin') {

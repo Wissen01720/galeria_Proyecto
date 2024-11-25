@@ -1,0 +1,11 @@
+.artwork-card {
+  margin: 0 10px;
+}
+
+.slick-prev:before, .slick-next:before {
+  color: white;
+}
+
+.slick-prev, .slick-next {
+  z-index: 1;
+}

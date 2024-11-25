@@ -1,28 +1,33 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-// Crear el contexto de autenticación
 const AuthContext = createContext();
 
-// Exportar el hook para acceder al contexto de autenticación
 export const useAuth = () => useContext(AuthContext);
 
-// El componente que proporciona el contexto
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  // Simulando un proceso de inicio de sesión
   const login = (userData) => {
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
     console.log("User logged in:", userData);
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
     console.log("User logged out");
   };
 
+  const getToken = () => {
+    return user?.token;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );

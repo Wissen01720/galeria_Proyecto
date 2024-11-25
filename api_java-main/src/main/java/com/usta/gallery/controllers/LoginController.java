@@ -47,6 +47,8 @@ public class LoginController {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Login successful");
             response.put("role", usuario.getRoles().getRol());
+            response.put("id", usuario.getId());
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.severe("Error during login: " + e.getMessage());

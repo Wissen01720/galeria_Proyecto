@@ -9,8 +9,9 @@ import { useAuth } from "../context/AuthContext"; // Ensure the path is correct
 const MotionPaper = motion(Paper);
 
 function ArtistDashboard() {
-  const { user } = useAuth(); // Use the useAuth hook
-  const userId = user?.id; // Ensure userId is defined
+  const { user } = useAuth();
+  const userId = user?.id;
+  console.log("User id:", userId);
 
   const [artworks, setArtWorks] = useState([]);
   const [tipos, setTipos] = useState([]);
@@ -68,21 +69,22 @@ function ArtistDashboard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const { title, description, year, month, day, tecnica, tipo, imageBase64 } = newArtwork;
-  
+
+    // Validar campos requeridos
     if (!title || !description || !year || !month || !day || !tecnica || !tipo || !imageBase64) {
       alert("Por favor, completa todos los campos y sube una imagen.");
       return;
     }
-  
+
     if (!userId) {
       alert("Usuario no válido. Por favor, inicia sesión.");
       return;
     }
-  
+
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-  
+
     const artworkData = {
       titulo: title,
       descripcion: description,
@@ -90,24 +92,22 @@ function ArtistDashboard() {
       imagen: imageBase64,
       tecnica: tecnica,
       tipo: { id: tipo },
-      idUsuario: { id: userId } // Ensure to include the user ID here
+      idUsuario: { id: userId }, // Verifica que el backend espera esta estructura
     };
 
-    // Log the data being sent to the backend
-    console.log("Sending artwork data to backend:", artworkData);
-    console.log("User ID:", userId);
-  
+    console.log("JSON enviado al backend:", artworkData);
+
     try {
       const response = await fetch("http://localhost:8080/api/obras", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(artworkData)
+        body: JSON.stringify(artworkData),
       });
-    
+
       if (response.ok) {
         const newArtworkData = await response.json();
         setArtWorks([...artworks, newArtworkData]);
-        // Reset form here
+        // Reset form
         setNewArtwork({
           title: '',
           description: '',
@@ -116,11 +116,11 @@ function ArtistDashboard() {
           month: new Date().getMonth() + 1,
           day: new Date().getDate(),
           tecnica: '',
-          tipo: ''
+          tipo: '',
         });
         setImageFile(null);
         setImagePreview(null);
-        console.log("Artwork saved successfully:", newArtworkData);
+        console.log("Obra guardada exitosamente:", newArtworkData);
       } else {
         const errorText = await response.text();
         console.error("Error al guardar la obra:", errorText);
@@ -129,7 +129,7 @@ function ArtistDashboard() {
     } catch (error) {
       console.error("Ocurrió un error al guardar la obra:", error);
       alert("Ocurrió un error al guardar la obra. Por favor, inténtalo de nuevo.");
-    }    
+    }
   };
 
   return (

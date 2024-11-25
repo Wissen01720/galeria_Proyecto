@@ -4,14 +4,14 @@ import { useSpring, animated } from 'react-spring';
 import { useAuth } from '../context/AuthContext';
 
 const MyArtworks = () => {
-  const { user, getToken } = useAuth();
+  const { user } = useAuth();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const token = getToken();
+        const token = user?.token; // Asume que el token está disponible en el objeto user
         const response = await fetch('http://localhost:8080/api/obras', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -29,8 +29,10 @@ const MyArtworks = () => {
       }
     };
 
-    fetchArtworks();
-  }, [user, getToken]);
+    if (user) {
+      fetchArtworks();
+    }
+  }, [user]);
 
   const fadeIn = useSpring({ opacity: 1, from: { opacity: 0 } });
 

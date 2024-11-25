@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid, Box, Button, Card, CardContent, CardMedia } from '@mui/material';
+import { Typography, Grid, Box, Button, Card, CardContent, CardMedia, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/system';
-import ArtworkCarousel from './ArtworkCarousel';
 import EventsSection from './EventsSection';
 
 const FullWidthWrapper = styled(Box)({
@@ -53,6 +52,7 @@ const StyledCard = styled(Card)({
 const Home = () => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedArtwork, setSelectedArtwork] = useState(null);
 
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -72,6 +72,14 @@ const Home = () => {
 
     fetchArtworks();
   }, []);
+
+  const handleLearnMore = (artwork) => {
+    setSelectedArtwork(artwork);
+  };
+
+  const handleClose = () => {
+    setSelectedArtwork(null);
+  };
 
   return (
     <FullWidthWrapper>
@@ -151,7 +159,7 @@ const Home = () => {
                           {artwork.descripcion}
                         </Typography>
                       </div>
-                      <StyledButton variant="contained">
+                      <StyledButton variant="contained" onClick={() => handleLearnMore(artwork)}>
                         LEARN MORE
                       </StyledButton>
                     </CardContent>
@@ -166,8 +174,35 @@ const Home = () => {
           )}
         </motion.div>
 
-        <ArtworkCarousel technique="Óleo" category="Paisaje" />
         <EventsSection />
+
+        {selectedArtwork && (
+          <Dialog open={Boolean(selectedArtwork)} onClose={handleClose} maxWidth="md" fullWidth>
+            <DialogTitle>{selectedArtwork.titulo}</DialogTitle>
+            <DialogContent dividers>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <img
+                    src={selectedArtwork.imagen}
+                    alt={selectedArtwork.titulo}
+                    style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom>Description</Typography>
+                  <Typography variant="body1" paragraph>{selectedArtwork.descripcion}</Typography>
+                  <Typography variant="h6" gutterBottom>Technique</Typography>
+                  <Typography variant="body1" paragraph>{selectedArtwork.tecnica}</Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
       </ContentWrapper>
     </FullWidthWrapper>
   );
