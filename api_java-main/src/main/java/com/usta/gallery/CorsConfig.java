@@ -12,11 +12,20 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
+        
+        // Permite credenciales (cookies, etc.)
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://4.233.147.167:2017"); // Cambia esto a la URL de tu frontend
+        
+        // Origen permitido (tu frontend)
+        config.addAllowedOrigin("http://4.233.147.167:2017");
+        
+        // Permite todos los encabezados
         config.addAllowedHeader("*");
+        
+        // Permite todos los métodos HTTP
         config.addAllowedMethod("*");
 
+        // Aplica la configuración a todas las rutas
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
