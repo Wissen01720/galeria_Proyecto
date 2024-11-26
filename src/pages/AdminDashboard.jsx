@@ -27,7 +27,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/categorias');
+        const response = await fetch('http://4.233.147.167:8080/api/categorias');
         if (!response.ok) {
           throw new Error('Error fetching categories');
         }
@@ -65,7 +65,7 @@ function AdminDashboard() {
       
       console.log('Event to submit:', eventToSubmit);
       
-      const response = await fetch('http://localhost:8080/api/exposiciones', {
+      const response = await fetch('http://4.233.147.167:8080/api/exposiciones', {
         method: 'POST',
         body: JSON.stringify(eventToSubmit),
         headers: {
@@ -91,7 +91,7 @@ function AdminDashboard() {
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/categorias', {
+      const response = await fetch('http://4.233.147.167:8080/api/categorias', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ function AdminDashboard() {
 
   const handleDeleteCategory = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/categorias/${categoryId}`, {
+      const response = await fetch(`http://4.233.147.167:8080/api/categorias/${categoryId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -132,7 +132,7 @@ function AdminDashboard() {
 
   const handleSaveCategory = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/categorias/${categoryId}`, {
+      const response = await fetch(`http://4.233.147.167:8080/api/categorias/${categoryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

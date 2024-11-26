@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/exposiciones")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://4.233.147.167:5173")
 public class ExposicionController {
   
   @Autowired

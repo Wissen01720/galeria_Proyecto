@@ -10,7 +10,7 @@ const ArtworkCarousel = ({ technique = 'Óleo', category = 'Paisaje' }) => {
     const fetchArtworks = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/obras?technique=${technique}&category=${category}`,
+          `http://4.233.147.167:8080/api/obras?technique=${technique}&category=${category}`,
           { credentials: 'include' }
         );
         const data = await response.json();

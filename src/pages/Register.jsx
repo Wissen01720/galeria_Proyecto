@@ -90,7 +90,7 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/usuarios', {
+      const response = await fetch('http://4.233.147.167:8080/api/usuarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

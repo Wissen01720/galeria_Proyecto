@@ -64,7 +64,7 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/usuarios'); // Ajusta la URL según tu configuración
+      const response = await fetch('http://4.233.147.167:8080/api/usuarios'); // Ajusta la URL según tu configuración
       const data = await response.json();
       setUsers(data);
       setLoading(false);
@@ -167,7 +167,7 @@ const ManageUsers = () => {
 
   // Funciones para conectar con tu backend
   const createUser = async (userData) => {
-    await fetch('http://localhost:8080/api/usuarios', { // Ajusta la URL según tu configuración
+    await fetch('http://4.233.147.167:8080/api/usuarios', { // Ajusta la URL según tu configuración
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const ManageUsers = () => {
   };
 
   const updateUser = async (userId, userData) => {
-    await fetch(`http://localhost:8080/api/usuarios/${userId}`, { // Ajusta la URL según tu configuración
+    await fetch(`http://4.233.147.167:8080/api/usuarios/${userId}`, { // Ajusta la URL según tu configuración
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -187,7 +187,7 @@ const ManageUsers = () => {
   };
 
   const deleteUser = async (userId) => {
-    await fetch(`http://localhost:8080/api/usuarios/${userId}`, { // Ajusta la URL según tu configuración
+    await fetch(`http://4.233.147.167:8080/api/usuarios/${userId}`, { // Ajusta la URL según tu configuración
       method: 'DELETE',
     });
   };

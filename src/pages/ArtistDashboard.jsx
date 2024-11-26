@@ -31,7 +31,7 @@ function ArtistDashboard() {
   useEffect(() => {
     const fetchTipos = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/tipos');
+        const response = await fetch('http://4.233.147.167:8080/api/tipos');
         console.log('Fetching tipos:', response);
         if (!response.ok) {
           throw new Error('Failed to fetch types');
@@ -98,7 +98,7 @@ function ArtistDashboard() {
     console.log("JSON enviado al backend:", artworkData);
 
     try {
-      const response = await fetch("http://localhost:8080/api/obras", {
+      const response = await fetch("http://4.233.147.167:8080/api/obras", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(artworkData),

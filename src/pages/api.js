@@ -1,5 +1,5 @@
 export const fetchArtworksByTechniqueAndCategory = async (technique, category) => {
-  const response = await fetch(`http://localhost:8080/api/obras?technique=${technique}&category=${category}`, {
+  const response = await fetch(`http://4.233.147.167:8080/api/obras?technique=${technique}&category=${category}`, {
     method: 'GET',
     credentials: 'include', // Incluir credenciales en la solicitud
   });
@@ -11,7 +11,7 @@ export const fetchArtworksByTechniqueAndCategory = async (technique, category) =
 
 export const fetchExposiciones = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/exposiciones', {
+    const response = await fetch('http://4.233.147.167:8080/api/exposiciones', {
       method: 'GET',
       credentials: 'include', // Incluir credenciales en la solicitud
     });

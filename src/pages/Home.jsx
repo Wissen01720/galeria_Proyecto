@@ -57,7 +57,7 @@ const Home = () => {
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/obras');
+        const response = await fetch('http://4.233.147.167:8080/api/obras');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

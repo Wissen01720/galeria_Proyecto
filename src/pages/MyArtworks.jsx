@@ -12,7 +12,7 @@ const MyArtworks = () => {
     const fetchArtworks = async () => {
       try {
         const token = user?.token; // Asume que el token está disponible en el objeto user
-        const response = await fetch('http://localhost:8080/api/obras', {
+        const response = await fetch('http://4.233.147.167:8080/api/obras', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
