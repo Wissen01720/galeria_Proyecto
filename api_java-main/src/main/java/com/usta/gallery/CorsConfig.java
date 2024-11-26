@@ -19,13 +19,14 @@ public class CorsConfig {
         // Origen permitido (tu frontend)
         config.addAllowedOrigin("http://4.233.147.167:2017");
         
+        config.addAllowedOriginPattern("*");
+
         // Permite todos los encabezados
         config.addAllowedHeader("*");
         
         // Permite todos los métodos HTTP
         config.addAllowedMethod("*");
 
-        // Aplica la configuración a todas las rutas
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
