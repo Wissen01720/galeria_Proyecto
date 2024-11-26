@@ -16,7 +16,6 @@ public class CorsConfig {
         config.addAllowedOrigin("http://4.233.147.167:2017"); // Cambia esto a la URL de tu frontend
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
